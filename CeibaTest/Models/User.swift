@@ -23,8 +23,8 @@ class User: Object, Codable {
                 switch result {
                 case .success(let users):
                     Storage.saveData(users)
-                case .failure(_):
-                    return
+                case .failure(let error):
+                    print(error)
                 }
                 completionHandler(result)
             }

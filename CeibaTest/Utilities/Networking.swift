@@ -11,6 +11,11 @@ enum NetworkError: Error {
     case badURL
     case decodeError
     case other(error: Error?)
+    
+    var description: String {
+        return String(reflecting: self)
+    }
+    
 }
 
 struct Networking {
@@ -35,6 +40,6 @@ struct Networking {
             } catch {
                 completionHandler(.failure(.decodeError))
             }
-        }
+        }.resume()
     }
 }

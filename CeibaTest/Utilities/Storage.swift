@@ -8,12 +8,12 @@
 import RealmSwift
 
 struct Storage {
-    static let realm = try! Realm()
     
     static func saveData<T>(_ data: [T]) where T: Object {
         do {
-            try Storage.realm.write({
-                Storage.realm.add(data)
+            let realm = try Realm()
+            try realm.write({
+                realm.add(data)
             })
         } catch {
             fatalError("Internal error on DB")
@@ -21,10 +21,15 @@ struct Storage {
     }
     
     static func getData<T>(of type: T.Type, filter: String? = nil) -> Array<T> where T: Object {
-        if let dbFilter = filter {
-            return Array(Storage.realm.objects(type).filter(dbFilter))
-        } else {
-            return Array(Storage.realm.objects(type))
+        do {
+            let realm = try Realm()
+            if let dbFilter = filter {
+                return Array(realm.objects(type).filter(dbFilter))
+            } else {
+                return Array(realm.objects(type))
+            }
+        } catch {
+            fatalError("Internal error on DB")
         }
     }
 }

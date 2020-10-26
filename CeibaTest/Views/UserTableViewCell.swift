@@ -8,22 +8,21 @@
 import UIKit
 
 class UserTableViewCell: UITableViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
+    
     @IBOutlet weak var name: UILabel!
     @IBOutlet weak var phone: UILabel!
     @IBOutlet weak var email: UILabel!
     
+    var seePostClosure: (() -> Void)?
+    
     @IBAction func postsButtonTouchUpInside(_ sender: Any) {
+        seePostClosure?()
     }
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    func configureCell(with user: User) {
+        name.text = user.name
+        phone.text = user.phone
+        email.text = user.email
     }
 
 }
