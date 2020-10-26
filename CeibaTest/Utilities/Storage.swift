@@ -10,7 +10,7 @@ import RealmSwift
 struct Storage {
     static let realm = try! Realm()
     
-    func saveData<T>(data: [T]) where T: Object {
+    static func saveData<T>(_ data: [T]) where T: Object {
         do {
             try Storage.realm.write({
                 Storage.realm.add(data)
@@ -20,7 +20,7 @@ struct Storage {
         }
     }
     
-    func getData<T>(of type: T.Type, filter: String?) -> Array<T> where T: Object {
+    static func getData<T>(of type: T.Type, filter: String? = nil) -> Array<T> where T: Object {
         if let dbFilter = filter {
             return Array(Storage.realm.objects(type).filter(dbFilter))
         } else {

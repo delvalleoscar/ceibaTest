@@ -15,7 +15,7 @@ class Post: Object, Codable {
     
     static func getPosts(userId: Int, completionHandler: @escaping(Result<[Post], NetworkError>) -> Void) {
         
-        let posts = Array(Storage.realm.objects(Post.self).filter("userId == \(userId)"))
+        let posts = Storage.getData(of: Post.self, filter: "userId == \(userId)")
         if !posts.isEmpty {
             completionHandler(.success(posts))
         } else {
@@ -23,13 +23,7 @@ class Post: Object, Codable {
             Networking.get(with: path) { (result: Result<[Post], NetworkError>) in
                 switch result {
                 case .success(let posts):
-                    do {
-                        try Storage.realm.write({
-                            Storage.realm.add(posts)
-                        })
-                    } catch {
-                        fatalError("Internal error on DB")
-                    }
+                    Storage.saveData(posts)
                 case .failure(_):
                     return
                 }
