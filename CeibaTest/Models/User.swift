@@ -6,10 +6,34 @@
 //
 
 import Foundation
+import RealmSwift
 
-struct User: Codable {
-    let id: Int
-    let name: String
-    let email: String
-    let phone: String
+class User: Object, Codable {
+    @objc dynamic var id: Int = -1
+    @objc dynamic var name: String = ""
+    @objc dynamic var email: String = ""
+    @objc dynamic var phone: String = ""
+    
+    static func getUsers(completionHandler: @escaping(Result<[User], NetworkError>) -> Void) {
+        let users = Storage.getData(User.Type)
+        if users.count > 0 {
+            completionHandler(.success(users))
+        } else {
+            Networking.get(with: "https://jsonplaceholder.typicode.com/users") { (result: Result<[User], NetworkError>) in
+                switch result {
+                case .success(let users):
+                    do {
+                        try Storage.realm.write({
+                            Storage.realm.add(users)
+                        })
+                    } catch {
+                        fatalError("Internal error on DB")
+                    }
+                case .failure(_):
+                    return
+                }
+                completionHandler(result)
+            }
+        }
+    }
 }
